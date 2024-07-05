@@ -1,0 +1,48 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="flex-col">
+        <div class="flex-row">
+            <h2>{{ user.username }}</h2>
+            <p><strong>{{ user.followers.count }}</strong> Followers</p>
+            <p><strong>{{ user.following.count }}</strong> Following</p>
+            {% if request.user != user %}
+                <form action="{% url 'user_page' user.username %}" method="post">
+                {% csrf_token %}
+                    <input name="follow" type="submit" class="buttons" value="Follow">
+                    <input name="unfollow" type="submit" class="buttons" value="Unfollow">              
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 style="text-align: center">Posts</h4>
+    {% for post in users_posts %}
+        <div class="new-post-main">
+            <div class="middle-container">
+                <div id="content-{{ post.id }}" style="font-size: 1.3em">{{ post.content }}</div>
+                <div class="likes-container">
+                    <button id="likeBtn" data-post-id="{{ post.id }}" class="like-buttons invisible-buttons">
+                    {% if request.user in post.likes.all %}    
+                        <i class="fa-solid fa-heart" style="color: #ff0000;"></i>
+                    {% else %}
+                        <i class="fa-regular fa-heart"></i>                        
+                    {% endif %}
+                    </button>
+                    <p id="likes-count-{{ post.id }}">{{ post.likes.count }}</p>
+                </div>
+                <p>{{ post.timestamp }}</p>
+                {% if post.author == request.user %}
+                    <button id="editBtn" data-post-id="{{ post.id }}" class="edit-buttons buttons">Edit</button>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <h3 class="centered-texts">Your posts will show up here</h3>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/script.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h1 style="margin-left: 20px">Following</h1>
+    {% for post in posts %}
+        <div class="new-post-main">
+            <div class="middle-container">
+                <a href="{% url 'user_page' post.author %}"><h4>{{ post.author }}</h4></a>
+                <div id="content-{{ post.id }}" style="font-size: 1.3em">{{ post.content }}</div>
+                <div class="likes-container">
+                    <button id="likeBtn" data-post-id="{{ post.id }}" class="like-buttons invisible-buttons">
+                    {% if request.user in post.likes.all %}    
+                        <i class="fa-solid fa-heart" style="color: #ff0000;"></i>
+                    {% else %}
+                        <i class="fa-regular fa-heart"></i>                        
+                    {% endif %}
+                    </button>
+                    <p id="likes-count-{{ post.id }}">{{ post.likes.count }}</p>
+                </div>
+                <p>{{ post.timestamp }}</p>
+                {% if post.author == request.user %}
+                    <button id="editBtn" data-post-id="{{ post.id }}" class="edit-buttons buttons">Edit</button>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <h3 class="centered-texts">Here will be posts from people that you follow</h3>
+    {% endfor %}
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/script.js' %}"></script>
+{% endblock %}
